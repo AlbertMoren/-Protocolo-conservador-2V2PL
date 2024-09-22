@@ -1,4 +1,4 @@
-class Grafo:
+class Grafo():
     def __init__(self):
         self.grafo = {}
 
