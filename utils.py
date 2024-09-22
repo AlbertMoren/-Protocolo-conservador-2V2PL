@@ -4,20 +4,27 @@ LEITURA = 0
 ESCRITA = 1
 UPDATE = 2
 COMMIT = 3
-ABORT = 4
 
 #TIPO DE OBJETOS
-BANCO = 0
-AREA = 1
-TABELA = 2 
-PAGINA = 3
-TUPLA = 4
+BANCO = 1
+AREA = 2
+TABELA = 3
+PAGINA = 4
+TUPLA = 5
+
+#CONVERSÃO OBJETO
+tipos = {BANCO: 'Banco', AREA: 'Área', TABELA: 'Tabela', PAGINA: 'Página', TUPLA: 'Tupla'}
 
 #BLOQUEIOS
 BLOQUEIO_LEITURA = 0
 BLOQUEIO_ESCRITA = 1
 BLOQUEIO_UPDATE = 2
 BLOQUEIO_CERTIFY = 4
+I_BLOQUEIO_LEITURA = 5
+I_BLOQUEIO_ESCRITA = 6
+I_BLOQUEIO_UPDATE = 7
+I_BLOQUEIO_CERTIFY = 8
+
 
 #status
 CONCEDIDO = 1
@@ -36,7 +43,7 @@ class Objeto():
         return self.index
     
     def __str__(self) -> str:
-        return f"index = {self.index}, tipo = {self.objeto}"
+        return f"index = {self.index}, tipo = {tipos[self.objeto]}"
 
 #CLASSE OPERAÇÃO
 class Operation():
@@ -45,3 +52,4 @@ class Operation():
         self.T = T
         self.op = op
         self.obj = obj
+        
