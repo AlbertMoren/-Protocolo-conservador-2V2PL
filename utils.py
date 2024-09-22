@@ -19,6 +19,11 @@ BLOQUEIO_ESCRITA = 1
 BLOQUEIO_UPDATE = 2
 BLOQUEIO_CERTIFY = 4
 
+#status
+CONCEDIDO = 1
+CONVERTENDO = 2
+AGUARDANDO = 3
+
 #CLASSE OBJETO
 class Objeto():
     def __init__(self, tipo:int, index:int):
