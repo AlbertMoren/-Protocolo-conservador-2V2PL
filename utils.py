@@ -6,16 +6,17 @@ UPDATE = 2
 COMMIT = 3
 
 #TIPO DE OBJETOS
-BANCO = 1
-AREA = 2
-TABELA = 3
-PAGINA = 4
-TUPLA = 5
+BANCO = 0
+AREA = 1
+TABELA = 2
+PAGINA = 3
+TUPLA = 4
 
 #CONVERSÃO OBJETO
 tipos = {BANCO: 'Banco', AREA: 'Área', TABELA: 'Tabela', PAGINA: 'Página', TUPLA: 'Tupla'}
 
 #BLOQUEIOS
+SEM_BLOQUEIO = -1
 BLOQUEIO_LEITURA = 0
 BLOQUEIO_ESCRITA = 1
 BLOQUEIO_UPDATE = 2
@@ -36,8 +37,7 @@ class Objeto():
     def __init__(self, tipo:int, index:int):
         self.index = index
         self.objeto = tipo
-        self.parentes = {'Banco' : [], 'Area': [], 'Tabela': [], 'Pagina': [], 'Tupla': []}
-        self.bloqueios = []
+        self.bloqueio = SEM_BLOQUEIO
     
     def get_index(self) -> int:
         return self.index

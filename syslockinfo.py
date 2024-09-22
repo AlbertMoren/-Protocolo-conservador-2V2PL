@@ -7,9 +7,8 @@ class LockTable:
 
     def __init__(self):
         self.locks = []
-
     
-    def add_lock(self, transaction_id,granulosidade, tupla_id, tipo_bloqueio, status):
+    def add_lock(self, transaction_id, granulosidade, tupla_id, tipo_bloqueio, status):
         lock_id = len(self.locks) + 1  
 
         lock_entry = [lock_id, transaction_id, granulosidade, tupla_id, tipo_bloqueio, status]

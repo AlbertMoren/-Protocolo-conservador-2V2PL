@@ -1,10 +1,12 @@
 import utils 
-from utils import Objeto 
+from utils import Objeto
+from copy import deepcopy
 
 # Definição da classe TreeNode
-class TreeNode:
-    def __init__(self, objeto: Objeto):
+class TreeNode():
+    def __init__(self, objeto: Objeto, father:'TreeNode' = None):
         self.objeto = objeto
+        self.father = father
         self.children = []
 
     def add_child(self, child_node: 'TreeNode'):
@@ -15,12 +17,15 @@ class TreeNode:
         print('    ' * level + f"{utils.tipos[self.objeto.objeto]} (Index: {self.objeto.index})")
         for child in self.children:
             child.print_tree(level + 1)
+    
+    def __str__(self) -> str:
+        return self.objeto.__str__()
 
 class Tree:
     def __init__(self, raiz:TreeNode) -> None:
         self.raiz = raiz
     
-    def find_obj(self, id_obj:int):
+    def find_obj(self, id_obj:int) -> Objeto:
         node = self.find_node(id_obj)
 
         if node == None:
@@ -28,10 +33,10 @@ class Tree:
         
         return node.objeto
 
-    def find_node(self, id_node:int):
+    def find_node(self, id_node:int) -> TreeNode:
         return self.find_node_(self.raiz, id_node)
     
-    def find_node_(self, node:TreeNode, id_node:int):
+    def find_node_(self, node:TreeNode, id_node:int) -> TreeNode:
         if node.objeto.index == id_node:
             return node 
         
@@ -43,67 +48,105 @@ class Tree:
                     return result
 
         return None
+    
+    def get_parents_obj(self, obj: Objeto) -> list[Objeto]:
+        node = self.find_node(obj.index)
 
-# Construindo a árvore
-banco_obj = Objeto(tipo=1, index=1)
-banco_node = TreeNode(banco_obj)
-tree = Tree(banco_node)
+        if node == None:
+            return None
 
-# Adicionando Áreas
-area1_obj = Objeto(tipo=2, index=2)
-area1_node = TreeNode(area1_obj)
-banco_node.add_child(area1_node)
+        parents = [parent.objeto for parent in self.get_parents(node)]
 
-area2_obj = Objeto(tipo=2, index=3)
-area2_node = TreeNode(area2_obj)
-banco_node.add_child(area2_node)
+        return parents
 
-# Adicionando Tabelas à Área1
-tabela1_obj = Objeto(tipo=3, index=4)
-tabela1_node = TreeNode(tabela1_obj)
-area1_node.add_child(tabela1_node)
+    def get_parents(self, node: TreeNode) -> list[TreeNode]:
+        parents = []
+        node_loop = node
+        
+        while node_loop.objeto.index != self.raiz.objeto.index:
+            father = node_loop.father
+            parents.append(father)
+            node_loop = father
+        
+        return parents
+    
+    def get_descendants_obj(self, obj: Objeto) -> list[Objeto]:
+        node = self.find_node(obj.index)
 
-tabela2_obj = Objeto(tipo=3, index=5)
-tabela2_node = TreeNode(tabela2_obj)
-area1_node.add_child(tabela2_node)
+        if node == None:
+            return None
 
-# Adicionando Páginas à Tabela1
-pagina1_obj = Objeto(tipo=4, index=6)
-pagina1_node = TreeNode(pagina1_obj)
-tabela1_node.add_child(pagina1_node)
+        descendants = [descendant.objeto for descendant in self.get_descendants(node)]
 
-pagina2_obj = Objeto(tipo=4, index=7)
-pagina2_node = TreeNode(pagina2_obj)
-tabela1_node.add_child(pagina2_node)
+        return descendants
+    
+    def get_descendants(self, node: TreeNode) -> list[TreeNode]:
+        descendants = []
 
-# Adicionando Tuplas à Página1
-tupla1_obj = Objeto(tipo=5, index=8)
-tupla1_node = TreeNode(tupla1_obj)
-pagina1_node.add_child(tupla1_node)
+        if len(node.children) == 0:
+            return []
+        
+        descendants.extend(node.children)
 
-tupla2_obj = Objeto(tipo=5, index=9)
-tupla2_node = TreeNode(tupla2_obj)
-pagina1_node.add_child(tupla2_node)
+        for descendant in node.children:
+            descendants.extend(self.get_descendants(descendant))
 
-# Adicionando Tuplas à Página2
-tupla3_obj = Objeto(tipo=5, index=10)
-tupla3_node = TreeNode(tupla3_obj)
-pagina2_node.add_child(tupla3_node)
+        return descendants
+    
+# Exemplo de uso
+if __name__ == "__main__":
+    # Criando os objetos
+    banco_obj = Objeto(tipo=0, index=1)  # Banco
+    area1_obj = Objeto(tipo=1, index=2)   # Área 1
+    area2_obj = Objeto(tipo=1, index=3)   # Área 2
+    tabela1_obj = Objeto(tipo=2, index=4) # Tabela 1
+    tabela2_obj = Objeto(tipo=2, index=5) # Tabela 2
+    pagina1_obj = Objeto(tipo=3, index=6) # Página 1
+    tupla1_obj = Objeto(tipo=4, index=7)  # Tupla 1
 
-tupla4_obj = Objeto(tipo=5, index=11)
-tupla4_node = TreeNode(tupla4_obj)
-pagina2_node.add_child(tupla4_node)
+    # Criando a árvore
+    banco_node = TreeNode(objeto=banco_obj)
+    area1_node = TreeNode(objeto=area1_obj, father=banco_node)
+    area2_node = TreeNode(objeto=area2_obj, father=banco_node)
+    tabela1_node = TreeNode(objeto=tabela1_obj, father=area1_node)
+    tabela2_node = TreeNode(objeto=tabela2_obj, father=area1_node)
+    pagina1_node = TreeNode(objeto=pagina1_obj, father=tabela1_node)
+    tupla1_node = TreeNode(objeto=tupla1_obj, father=pagina1_node)
 
-# (Opcional) Adicionando Páginas e Tuplas à Tabela2
-pagina3_obj = Objeto(tipo=4, index=12)
-pagina3_node = TreeNode(pagina3_obj)
-tabela2_node.add_child(pagina3_node)
+    # Montando a hierarquia
+    banco_node.add_child(area1_node)
+    banco_node.add_child(area2_node)
+    area1_node.add_child(tabela1_node)
+    area1_node.add_child(tabela2_node)
+    tabela1_node.add_child(pagina1_node)
+    pagina1_node.add_child(tupla1_node)
 
-tupla5_obj = Objeto(tipo=5, index=13)
-tupla5_node = TreeNode(tupla5_obj)
-pagina3_node.add_child(tupla5_node)
+    # Criando a árvore
+    tree = Tree(raiz=banco_node)
 
-# Imprimindo a árvore completa
-banco_node.print_tree()
+    # Imprimindo a árvore
+    print("Estrutura da Árvore:")
+    tree.raiz.print_tree()
 
-print(tree.find_obj(11))
+    # Testando a busca
+    search_id = 6
+    found_obj = tree.find_obj(search_id)
+    if found_obj:
+        print(f"\nObjeto encontrado: {found_obj}")
+    else:
+        print("\nObjeto não encontrado.")
+
+    # Obtendo pais da página
+    descendants = tree.get_descendants_obj(banco_obj)
+    parents = tree.get_parents_obj(banco_obj)
+
+    print('DESCENDENTS')
+    for descendant in descendants:
+        print(descendant)
+    
+    print('PARENTS')
+    for parent in parents:
+        print(parent)
+
+
+    
