@@ -47,9 +47,10 @@ class Objeto():
 
 #CLASSE OPERAÇÃO
 class Operation():
-    def __init__(self, id:int, T:int, op:int, obj:Objeto):
+    def __init__(self, id:int, T:int, op:int, obj:Objeto, gra: int):
         self.id = id
         self.T = T
         self.op = op
         self.obj = obj
+        self.gra = gra
         
