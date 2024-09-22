@@ -13,6 +13,9 @@ class LockTable:
             if lock[0] == lock_id:
                 return lock
         
+    def add_lock(self, transaction_id, granulosidade, tupla_id, tipo_bloqueio, status):
+        lock_id = len(self.locks) + 1  
+
 
     def add_lock(self, transaction_id,granulosidade, objeto_id, tipo_bloqueio, status):
         lock_id = len(self.locks) + 1  
