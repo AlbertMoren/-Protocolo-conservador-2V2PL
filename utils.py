@@ -37,7 +37,7 @@ class Objeto():
     def __init__(self, tipo:int, index:int):
         self.index = index
         self.objeto = tipo
-        self.bloqueio = SEM_BLOQUEIO
+        self.bloqueios = []
     
     def get_index(self) -> int:
         return self.index
