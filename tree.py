@@ -48,6 +48,13 @@ class Tree:
                     return result
 
         return None
+
+    def get_parent_obj(self, obj: Objeto, tipo: int) -> Objeto:
+        parents = self.get_parents_obj(obj)
+
+        for parent in parents:
+            if parent.objeto == tipo:
+                return parent
     
     def get_parents_obj(self, obj: Objeto) -> list[Objeto]:
         node = self.find_node(obj.index)
@@ -92,61 +99,75 @@ class Tree:
             descendants.extend(self.get_descendants(descendant))
 
         return descendants
-    
-# Exemplo de uso
-if __name__ == "__main__":
-    # Criando os objetos
-    banco_obj = Objeto(tipo=0, index=1)  # Banco
-    area1_obj = Objeto(tipo=1, index=2)   # Área 1
-    area2_obj = Objeto(tipo=1, index=3)   # Área 2
-    tabela1_obj = Objeto(tipo=2, index=4) # Tabela 1
-    tabela2_obj = Objeto(tipo=2, index=5) # Tabela 2
-    pagina1_obj = Objeto(tipo=3, index=6) # Página 1
-    tupla1_obj = Objeto(tipo=4, index=7)  # Tupla 1
 
-    # Criando a árvore
+def criar_tree() -> Tree:
+    """
+    Cria e retorna uma árvore hierárquica com a seguinte estrutura:
+
+    - Banco (Index: 1)
+        - Área 1 (Index: 2)
+            - Tabela 1 (Index: 4)
+                - Página 1 (Index: 6)
+                    - Tupla 1 (Index: 8)
+                    - Tupla 2 (Index: 9)
+                - Página 2 (Index: 7)
+                    - Tupla 3 (Index: 10)
+            - Tabela 2 (Index: 5)
+                - Página 3 (Index: 12)
+                    - Tupla 4 (Index: 13)
+        - Área 2 (Index: 3)
+
+    Returns:
+        Tree: Instância da árvore criada.
+    """
+    # Criando os objetos
+    banco_obj = Objeto(tipo=0, index=1)    # Banco
+    area1_obj = Objeto(tipo=1, index=2)     # Área 1
+    area2_obj = Objeto(tipo=1, index=3)     # Área 2
+    tabela1_obj = Objeto(tipo=2, index=4)   # Tabela 1
+    tabela2_obj = Objeto(tipo=2, index=5)   # Tabela 2
+    pagina1_obj = Objeto(tipo=3, index=6)   # Página 1
+    pagina2_obj = Objeto(tipo=3, index=7)   # Página 2
+    pagina3_obj = Objeto(tipo=3, index=12)  # Página 3
+    tupla1_obj = Objeto(tipo=4, index=8)    # Tupla 1
+    tupla2_obj = Objeto(tipo=4, index=9)    # Tupla 2
+    tupla3_obj = Objeto(tipo=4, index=10)   # Tupla 3
+    tupla4_obj = Objeto(tipo=4, index=13)   # Tupla 4
+
+    # Criando os nós da árvore
     banco_node = TreeNode(objeto=banco_obj)
     area1_node = TreeNode(objeto=area1_obj, father=banco_node)
     area2_node = TreeNode(objeto=area2_obj, father=banco_node)
     tabela1_node = TreeNode(objeto=tabela1_obj, father=area1_node)
     tabela2_node = TreeNode(objeto=tabela2_obj, father=area1_node)
     pagina1_node = TreeNode(objeto=pagina1_obj, father=tabela1_node)
+    pagina2_node = TreeNode(objeto=pagina2_obj, father=tabela1_node)
+    pagina3_node = TreeNode(objeto=pagina3_obj, father=tabela2_node)
     tupla1_node = TreeNode(objeto=tupla1_obj, father=pagina1_node)
+    tupla2_node = TreeNode(objeto=tupla2_obj, father=pagina1_node)
+    tupla3_node = TreeNode(objeto=tupla3_obj, father=pagina2_node)
+    tupla4_node = TreeNode(objeto=tupla4_obj, father=pagina3_node)
 
     # Montando a hierarquia
     banco_node.add_child(area1_node)
     banco_node.add_child(area2_node)
+    
     area1_node.add_child(tabela1_node)
     area1_node.add_child(tabela2_node)
+    
     tabela1_node.add_child(pagina1_node)
+    tabela1_node.add_child(pagina2_node)
+    
+    tabela2_node.add_child(pagina3_node)
+    
     pagina1_node.add_child(tupla1_node)
+    pagina1_node.add_child(tupla2_node)
+    
+    pagina2_node.add_child(tupla3_node)
+    
+    pagina3_node.add_child(tupla4_node)
 
     # Criando a árvore
     tree = Tree(raiz=banco_node)
 
-    # Imprimindo a árvore
-    print("Estrutura da Árvore:")
-    tree.raiz.print_tree()
-
-    # Testando a busca
-    search_id = 6
-    found_obj = tree.find_obj(search_id)
-    if found_obj:
-        print(f"\nObjeto encontrado: {found_obj}")
-    else:
-        print("\nObjeto não encontrado.")
-
-    # Obtendo pais da página
-    descendants = tree.get_descendants_obj(banco_obj)
-    parents = tree.get_parents_obj(banco_obj)
-
-    print('DESCENDENTS')
-    for descendant in descendants:
-        print(descendant)
-    
-    print('PARENTS')
-    for parent in parents:
-        print(parent)
-
-
-    
+    return tree
