@@ -14,10 +14,9 @@ class LockTable:
         for lock in self.locks:
             if lock[0] == lock_id:
                 return lock
-            
-        return []
-    
-    def add_lock(self, transaction_id, granulosidade, objeto_id, tipo_bloqueio, status):
+
+    def add_lock(self, transaction_id,granulosidade, objeto_id, tipo_bloqueio, status):
+
         lock_id = len(self.locks) + 1  
         lock_entry = [lock_id, transaction_id, granulosidade, objeto_id, tipo_bloqueio, status]
         self.locks.append(lock_entry)
