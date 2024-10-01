@@ -1,10 +1,7 @@
 import Grafo
-from copy import deepcopy
 import tree
 import syslockinfo
 import utils
-
-# Função para ler um arquivo CSV
 
 
 class Escalonador():
@@ -22,9 +19,13 @@ class Escalonador():
 
         self.count = 0
 
-    # def escalonar(self, operations:list[utils.Operation]) -> None:
-    #     self.para_escalonar = deepcopy(operations)
-
+    """
+    Tenta escalonar uma operação dada, verificando os bloqueios e determinando se a operação
+    pode ser concedida ou precisa esperar.
+    - Define o tipo de bloqueio necessário para a operação (leitura, escrita, update ou commit).
+    - Verifica se a operação precisa ser bloqueada com base no tipo de operação e os bloqueios existentes.
+    - Caso haja incompatibilidade de bloqueios, adiciona arestas ao grafo de deadlock e, se necessário, aborta transações.
+    """
     def tentar_escalonar(self, op:utils.Operation):
         tipo_op = op.op
         bloqueio_requerido = utils.SEM_BLOQUEIO
@@ -74,27 +75,49 @@ class Escalonador():
         self.syslockinfo.add_lock(op.T, op.gra, op.obj.index, bloqueio_requerido, utils.CONCEDIDO)
 
         return 1
-        
+
+    """
+    Aborta uma transação, removendo-a da tabela de bloqueios.
+    Essa função é chamada quando ocorre um deadlock e uma transação precisa ser eliminada.
+    """    
     def abortar_transacao(self, T:int):
         self.syslockinfo.remove_transactionID(T)
-            
+
+    """
+    Verifica se uma transação `T` já possui um timestamp atribuído.
+    Retorna True se o timestamp já estiver no dicionário.
+    """        
     def esta_no_timestamp(self, T:int):
         if str(T) in self.timestamp.keys():
             return True
         return False
 
+    """
+    Atribui um timestamp à transação `T`, armazenando a ordem de chegada da transação.
+    Incrementa o contador `count` após adicionar o timestamp.
+    """
     def adicionar_no_timestamp(self, T:int):
         self.timestamp[str(T)] = self.count
         self.count += 1
-    
+    """
+    # Retorna o timestamp associado à transação `T` a partir do dicionário de timestamps.
+    """
     def get_timestamp(self, T:int):
         return self.timestamp[str(T)]
     
+    """
+    Compara os timestamps de duas transações e retorna aquela com o maior timestamp.
+    Isso é usado para determinar qual transação será abortada em um cenário de deadlock.
+    """
     def get_max_timestamp(self, T1:int, T2:int):
         if self.get_timestamp(T1) < self.get_timestamp(T2):
             return T2
         return T1
 
+    """
+    Lê um arquivo CSV e retorna uma matriz de inteiros.
+    Cada linha do arquivo CSV é convertida em uma lista de inteiros, representando a matriz de bloqueios.
+    """
     def read_csv(self, filename):
         with open(filename, 'r') as file:
             data = []
@@ -105,19 +128,12 @@ class Escalonador():
                 data.append([int(value) for value in row])
         return data
 
-# tree.py (continuação)
-
-# Função para criar operações
+"""
+Cria uma lista de operações associadas aos objetos da árvore.
+Cada operação contém uma transação (T), o tipo de operação (leitura, escrita, update, commit),
+e o objeto afetado. Essas operações serão usadas no processo de escalonamento.
+"""
 def criar_operacoes(tree: tree.Tree):
-    """
-    Cria e retorna uma lista de operações associadas aos objetos na árvore.
-
-    Args:
-        tree (Tree): A árvore onde as operações serão aplicadas.
-
-    Returns:
-        List[Operation]: Lista de instâncias de Operation.
-    """
     operacoes = []
     
     # Operação 1: Transaction 1, LEITURA no Banco (Index: 1)
@@ -162,6 +178,3 @@ if __name__ == '__main__':
         print(esc.syslockinfo.locks)
         print()
         print()
-    
-    #
-    #esc.tentar_escalonar()

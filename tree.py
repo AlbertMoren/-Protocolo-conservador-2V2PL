@@ -4,27 +4,45 @@ from copy import deepcopy
 
 # Definição da classe TreeNode
 class TreeNode():
+    """
+    Inicializa um nó da árvore com um objeto e, opcionalmente, seu nó pai.
+    """
     def __init__(self, objeto: Objeto, father:'TreeNode' = None):
         self.objeto = objeto
         self.father = father
         self.children = []
-
+    """
+    Adiciona um nó filho à lista de filhos deste nó.
+    """
     def add_child(self, child_node: 'TreeNode'):
         self.children.append(child_node)
 
+    """
+    Função recursiva que imprime a árvore de forma hierárquica.
+    O nível da hierarquia é controlado pela variável 'level'.
+    """
     def print_tree(self, level=0):
         #tipos = {utils.BANCO: 'Banco', utils.AREA: 'Área', utils.TABELA: 'Tabela', utils.PAGINA: 'Página', utils.TUPLA: 'Tupla'}
         print('    ' * level + f"{utils.tipos[self.objeto.objeto]} (Index: {self.objeto.index})")
         for child in self.children:
             child.print_tree(level + 1)
     
+    """
+    Representação em string de um nó, delegando para a representação do objeto.
+    """
     def __str__(self) -> str:
         return self.objeto.__str__()
 
 class Tree:
+    """
+    Inicializa a árvore com um nó raiz.
+    """
     def __init__(self, raiz:TreeNode) -> None:
         self.raiz = raiz
     
+    """
+    Encontra e retorna um objeto específico na árvore com base em seu índice.
+    """
     def find_obj(self, id_obj:int) -> Objeto:
         node = self.find_node(id_obj)
 
@@ -33,9 +51,15 @@ class Tree:
         
         return node.objeto
 
+    """
+    Encontra e retorna o nó que contém um objeto com o índice fornecido.
+    """
     def find_node(self, id_node:int) -> TreeNode:
         return self.find_node_(self.raiz, id_node)
     
+    """
+    Função auxiliar recursiva para encontrar um nó na árvore.
+    """
     def find_node_(self, node:TreeNode, id_node:int) -> TreeNode:
         if node.objeto.index == id_node:
             return node 
@@ -49,6 +73,9 @@ class Tree:
 
         return None
 
+    """
+    Retorna o objeto pai de um determinado objeto com base no tipo solicitado.
+    """
     def get_parent_obj(self, obj: Objeto, tipo: int) -> Objeto:
         parents = self.get_parents_obj(obj)
 
@@ -56,6 +83,9 @@ class Tree:
             if parent.objeto == tipo:
                 return parent
     
+    """
+    Retorna a lista de objetos pais de um objeto específico.
+    """
     def get_parents_obj(self, obj: Objeto) -> list[Objeto]:
         node = self.find_node(obj.index)
 
@@ -66,6 +96,9 @@ class Tree:
 
         return parents
 
+    """
+    Retorna a lista de nós pais de um nó específico.
+    """
     def get_parents(self, node: TreeNode) -> list[TreeNode]:
         parents = []
         node_loop = node
@@ -77,6 +110,9 @@ class Tree:
         
         return parents
     
+    """
+    Retorna a lista de objetos descendentes de um objeto específico.
+    """
     def get_descendants_obj(self, obj: Objeto) -> list[Objeto]:
         node = self.find_node(obj.index)
 
@@ -87,6 +123,9 @@ class Tree:
 
         return descendants
     
+    """
+    Retorna a lista de nós descendentes de um nó específico.
+    """
     def get_descendants(self, node: TreeNode) -> list[TreeNode]:
         descendants = []
 
@@ -100,6 +139,9 @@ class Tree:
 
         return descendants
 
+"""
+Função para criar uma árvore de objetos predefinida.
+"""
 def criar_tree() -> Tree:
     """
     Cria e retorna uma árvore hierárquica com a seguinte estrutura:
